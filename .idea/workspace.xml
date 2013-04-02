@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="cccd8a68-9e96-4ca0-b01b-ced5ba79bb23" name="Default" comment="" />
+    <list default="true" id="cccd8a68-9e96-4ca0-b01b-ced5ba79bb23" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/jQuery.tinyscrollbar.js" afterPath="$PROJECT_DIR$/jQuery.tinyscrollbar.js" />
+    </list>
     <ignored path="TinyScrollbar.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="cccd8a68-9e96-4ca0-b01b-ced5ba79bb23" time="1364921970766" ignored="false" />
+    <file path="/Dummy.txt" changelist="cccd8a68-9e96-4ca0-b01b-ced5ba79bb23" time="1364924057547" ignored="false" />
     <file path="/jQuery.tinyscrollbar.css" changelist="cccd8a68-9e96-4ca0-b01b-ced5ba79bb23" time="1364921978552" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,6 +45,7 @@
     <option name="changedFiles">
       <list>
         <option value="$PROJECT_DIR$/jQuery.tinyscrollbar.css" />
+        <option value="$PROJECT_DIR$/jQuery.tinyscrollbar.js" />
       </list>
     </option>
   </component>
@@ -102,8 +105,12 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="options.splitter.main.proportions" value="0.3" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="options.lastSelected" value="editor.preferences.appearance" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
   </component>
   <component name="RunManager">
     <configuration default="true" type="DartUnitRunConfigurationType" factoryName="DartUnit">
@@ -208,15 +215,17 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/jQuery.tinyscrollbar.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="71" selection-start="360" selection-end="360" vertical-scroll-proportion="0.36956522" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/jQuery.tinyscrollbar.css">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="16" selection-start="311" selection-end="311" vertical-scroll-proportion="0.39056832">
-          <folding />
+        <state line="19" column="16" selection-start="311" selection-end="311" vertical-scroll-proportion="0.39056832" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/jQuery.tinyscrollbar.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="220" column="12" selection-start="8868" selection-end="8868" vertical-scroll-proportion="0.958231">
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
