@@ -57,8 +57,17 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\ExampleApp.css" />
     <Content Include="css\jQuery.tinyscrollbar.css" />
+    <Content Include="css\jQuery.tinyscrollbar.min.css">
+      <DependentUpon>jQuery.tinyscrollbar.css</DependentUpon>
+    </Content>
+    <Content Include="Index.html" />
+    <Content Include="Scripts\ExampleApp.js" />
     <Content Include="Scripts\jQuery.tinyscrollbar.js" />
+    <Content Include="Scripts\jQuery.tinyscrollbar.min.js">
+      <DependentUpon>jQuery.tinyscrollbar.js</DependentUpon>
+    </Content>
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="README.md" />
+    <Content Include="Scripts\jQuery.tinyscrollbar.min.js.map">
+      <DependentUpon>jQuery.tinyscrollbar.js</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
