@@ -24,7 +24,9 @@
             , size: 'auto' // set the size of the scrollbar to auto or a fixed number.
             , sizethumb: 'auto' // set the size of the thumb to auto or a fixed number.
             , invertscroll: false  // Enable mobile invert style scrolling
-            , contentOffset: 0
+            , scrollPadding: 5
+            , trackPadding: 3
+            , contentPadding: 15
         }
     };
 
@@ -46,7 +48,7 @@
         if (root.children('.viewport').length == 0) {
 
             //add all children to a content layer
-            var content = $('<div class="content">').css({ position: 'absolute' });
+            var content = $('<div class="content">').css({ position: 'relative' });
             root.append(content);
 
             root.children()
@@ -61,29 +63,29 @@
             );
 
             //add scroll bar layers
-            root.append($('<div class="scrollbar"><div class="track"><div class="thumb"><div class="end"></div></div></div></div>'));
+            root.append($('<div class="scrollbar"><div class="track"><div class="thumb"></div></div></div>'));
             options.invertscroll = typeof window.orientation != 'undefined';
         }
-        
+
         root.addClass('tinyscrollbar');
 
         var oSelf = this
-        , oWrapper = root
-        , oViewport = { obj: $('.viewport', root) }
-        , oContent = { obj: $('.content', root) }
-        , oScrollbar = { obj: $('.scrollbar', root) }
-        , oTrack = { obj: $('.track', oScrollbar.obj) }
-        , oThumb = { obj: $('.thumb', oScrollbar.obj) }
-        , sAxis = options.axis === 'x'
-        , sDirection = sAxis ? 'left' : 'top'
-        , sSize = sAxis ? 'Width' : 'Height'
-        , iScroll = 0
-        , iPosition = { start: 0, now: 0 }
-        , iMouse = {}
-        , touchEvents = 'ontouchstart' in document.documentElement
-        , contentOffset = options.contentOffset
-        , trackOffset = oTrack.obj.outerHeight() - oTrack.obj.height()
-        ;
+            , oWrapper = root
+            , oViewport = { obj: $('.viewport', root) }
+            , oContent = { obj: $('.content', root), padding: options.contentPadding }
+            , oScrollbar = { obj: $('.scrollbar', root), padding: options.scrollPadding }
+            , oTrack = { obj: $('.track', oScrollbar.obj), padding: options.trackPadding }
+            , oThumb = { obj: $('.thumb', oScrollbar.obj) }
+            , sAxis = options.axis === 'x'
+            , sDirection = sAxis ? 'left' : 'top'
+            , sAltDirection = sAxis ? 'bottom' : 'right'
+            , sSize = sAxis ? 'Width' : 'Height'
+            , sAltSize = sAxis ? 'height' : 'width'
+            , iScroll = 0
+            , iPosition = { start: 0, now: 0 }
+            , iMouse = {}
+            , touchEvents = 'ontouchstart' in document.documentElement
+            ;
 
         function initialize() {
             oSelf.update();
@@ -93,24 +95,15 @@
         }
 
         this.update = function (sScroll) {
-            oViewport[options.axis] = oViewport.obj.height(); //['offset' + sSize];
-            oContent[options.axis] = oContent.obj.height() + contentOffset; // [0]['scroll' + sSize];
+            oViewport[options.axis] = oViewport.obj.prop('offset' + sSize);
+            oContent[options.axis] = oContent.obj.prop('scroll' + sSize)
+                //+ oContent.obj.prop('offset' + sOffset)
+                + oContent.padding;
             oContent.ratio = oViewport[options.axis] / oContent[options.axis];
-
             oScrollbar.obj.toggleClass('disable', oContent.ratio >= 1);
 
-            oTrack[options.axis] = options.size === 'auto' ? oViewport[options.axis] - trackOffset : options.size;
-            oThumb[options.axis] = Math.min(
-            	oTrack[options.axis], 
-            	Math.max(
-            		0, 
-            		(options.sizethumb === 'auto' ? 
-            			((
-            				oTrack[options.axis] + (options.size === 'auto' ? trackOffset : 0)
-        				) * oContent.ratio) : 
-            			options.sizethumb)
-        		)
-    		);
+            oTrack[options.axis] = options.size === 'auto' ? oViewport[options.axis] - (oScrollbar.padding * 2) : options.size;
+            oThumb[options.axis] = Math.min(oTrack[options.axis] - (oTrack.padding * 2), Math.max(0, (options.sizethumb === 'auto' ? ((oTrack[options.axis] - (oTrack.padding * 2)) * oContent.ratio) : options.sizethumb)));
 
             oScrollbar.ratio = options.sizethumb === 'auto' ? (oContent[options.axis] / oTrack[options.axis]) : (oContent[options.axis] - oViewport[options.axis]) / (oTrack[options.axis] - oThumb[options.axis]);
 
@@ -123,13 +116,15 @@
         function setSize() {
             var sCssSize = sSize.toLowerCase();
 
+            oViewport.obj.css(sAltDirection, (oContent.ratio >= 1) ? '0px' : oScrollbar.obj[sAltSize]());
+            oScrollbar.obj.css(sDirection, oScrollbar.padding);
             oThumb.obj.css(sDirection, iScroll / oScrollbar.ratio);
             oContent.obj.css(sDirection, -iScroll);
             iMouse.start = oThumb.obj.offset()[sDirection];
 
-            oScrollbar.obj.css(sCssSize, oTrack[options.axis] - contentOffset);
-            oTrack.obj.css(sCssSize, oTrack[options.axis] - contentOffset);
-            oThumb.obj.css(sCssSize, oThumb[options.axis] - contentOffset);
+            oScrollbar.obj.css(sCssSize, oViewport[options.axis]);
+            oTrack.obj.css(sCssSize, oTrack[options.axis]);
+            oThumb.obj.css(sCssSize, oThumb[options.axis]);
         }
 
         function setEvents() {
@@ -179,8 +174,8 @@
         function wheel(event) {
             if (oContent.ratio < 1) {
                 var oEvent = event || window.event
-                , iDelta = oEvent.wheelDelta ? oEvent.wheelDelta / 120 : -oEvent.detail / 3
-                ;
+                    , iDelta = oEvent.wheelDelta ? oEvent.wheelDelta / 120 : -oEvent.detail / 3
+                    ;
 
                 iScroll -= iDelta * options.wheel;
                 iScroll = Math.min((oContent[options.axis] - oViewport[options.axis]), Math.max(0, iScroll));
