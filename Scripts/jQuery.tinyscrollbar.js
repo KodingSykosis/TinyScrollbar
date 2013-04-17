@@ -32,6 +32,7 @@
             , pagingData: {}
             , pagingKey: 'page'
             , pagingMax: 10
+            , pagingNum: 1
             , pagingAppendTo: null
             , updateWithWindow: true
         }
@@ -99,7 +100,7 @@
             , touchEvents = 'ontouchstart' in document.documentElement
             , paging = {
                 at: 0,
-                num: options.pagingNum || 1,
+                num: options.pagingNum,
                 url: options.pagingUrl,
                 data: options.pagingData,
                 key: options.pagingKey,
@@ -250,14 +251,24 @@
             }
         }
 
-        function end() {
+        function end(event) {
             $("body").removeClass("noSelect");
             $(document).unbind('mousemove', drag);
             $(document).unbind('mouseup', end);
             oThumb.obj.unbind('mouseup', end);
             oScrollbar.obj.removeClass("scrolling");
             document.ontouchmove = document.ontouchend = null;
-            triggerScrollEvents(iPosition);
+
+            var now;
+            if (options.invertscroll && touchEvents) {
+                now = Math.min((oTrack[options.axis] - oThumb[options.axis]), Math.max(0, (iPosition.start + (iMouse.start - (sAxis ? event.pageX : event.pageY)))));
+            }
+            else {
+                now = Math.min((oTrack[options.axis] - oThumb[options.axis]), Math.max(0, (iPosition.start + ((sAxis ? event.pageX : event.pageY) - iMouse.start))));
+            }
+
+            iScroll = iPosition.now * oScrollbar.ratio;
+            triggerScrollEvents({ now: iScroll });
         }
         
         function triggerScrollEvents(position) {
@@ -266,7 +277,7 @@
 
             if (pos.axis === 'y' && pos.now >= paging.at && paging.at > 0 && paging.num < paging.max) {
                 root.trigger('pagitation', $.Event('scroll'), pos);
-                gotoPage(paging.num++);
+                gotoPage(++paging.num);
                 paging.at = 0;
             }
         }
