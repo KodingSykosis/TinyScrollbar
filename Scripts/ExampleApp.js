@@ -1,11 +1,7 @@
-﻿(function($) {
-
-    $.factory('shell', {
-        singleton: true,
-        main: function() {
-            $('#content').tinyscrollbar({
-                pagingUrl: '/content.txt'
-            });
-        }
+﻿(function ($) {
+    $(function () {
+        $('#content').tinyscrollbar({
+            pagingUrl: '/content.txt'
+        });
     });
 })(jQuery);
