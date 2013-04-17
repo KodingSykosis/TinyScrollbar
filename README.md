@@ -19,6 +19,7 @@ This is a fork from <http://baijs.nl/tinyscrollbar/>
 
 ###$([selector]).tinyscrollbar_update(*[command]*);
 Updates the scrollable size and position
+
 ####command (Number, String)
 	number     - x/y position for scroll thumb
 	'relative' - Calculates the relative position for the thumb position to remain unchanged
