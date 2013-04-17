@@ -3,9 +3,8 @@
     $.factory('shell', {
         singleton: true,
         main: function() {
-            $('#content').tinyscrollbar();
-            $.resize(function() {
-                $('#content').tinyscrollbar_update('relative');
+            $('#content').tinyscrollbar({
+                pagingUrl: '/content.txt'
             });
         }
     });

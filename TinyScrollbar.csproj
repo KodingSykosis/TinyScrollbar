@@ -57,6 +57,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="content.txt" />
     <Content Include="css\ExampleApp.css" />
     <Content Include="css\jQuery.tinyscrollbar.css" />
     <Content Include="css\jQuery.tinyscrollbar.min.css">

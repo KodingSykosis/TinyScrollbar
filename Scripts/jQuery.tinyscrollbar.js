@@ -9,7 +9,7 @@
  * Date: 13 / 08 / 2012
  * @version 1.81
  * @author Maarten Baijs
- * @modified JG - Added code to wrap container with needed elements
+ * @modified by KodingSykosis
  */
 (function ($) {
 
@@ -27,6 +27,12 @@
             , scrollPadding: 5
             , trackPadding: 3
             , contentPadding: 15
+            , pagingAt: '75%'   //Should support both %, px, and int
+            , pagingUrl: null
+            , pagingData: {}
+            , pagingKey: 'page'
+            , pagingMax: 10
+            , updateWithWindow: true
         }
     };
 
@@ -85,6 +91,14 @@
             , iPosition = { start: 0, now: 0 }
             , iMouse = {}
             , touchEvents = 'ontouchstart' in document.documentElement
+            , paging = {
+                at: 0,
+                num: options.pagingNum || 1,
+                url: options.pagingUrl,
+                data: options.pagingData,
+                key: options.pagingKey,
+                max: options.pagingMax + 1
+            }
             ;
 
         function initialize() {
@@ -97,7 +111,6 @@
         this.update = function (sScroll) {
             oViewport[options.axis] = oViewport.obj.prop('offset' + sSize);
             oContent[options.axis] = oContent.obj.prop('scroll' + sSize)
-                //+ oContent.obj.prop('offset' + sOffset)
                 + oContent.padding;
             oContent.ratio = oViewport[options.axis] / oContent[options.axis];
             oScrollbar.obj.toggleClass('disable', oContent.ratio >= 1);
@@ -125,6 +138,10 @@
             oScrollbar.obj.css(sCssSize, oViewport[options.axis]);
             oTrack.obj.css(sCssSize, oTrack[options.axis]);
             oThumb.obj.css(sCssSize, oThumb[options.axis]);
+            
+            if (paging.url) {
+                paging.at = getPagePosition();
+            }
         }
 
         function setEvents() {
@@ -147,6 +164,12 @@
             }
             else if (options.scroll) {
                 oWrapper[0].onmousewheel = wheel;
+            }
+            
+            if (options.updateWithWindow) {
+                $(window).resize(function() {
+                    oSelf.update('relative');
+                });
             }
         }
 
@@ -182,6 +205,7 @@
 
                 oThumb.obj.css(sDirection, iScroll / oScrollbar.ratio);
                 oContent.obj.css(sDirection, -iScroll);
+                triggerScrollEvents({ now: iScroll });
 
                 if (options.lockscroll || (iScroll !== (oContent[options.axis] - oViewport[options.axis]) && iScroll !== 0)) {
                     oEvent = $.event.fix(oEvent);
@@ -213,6 +237,47 @@
             oThumb.obj.unbind('mouseup', end);
             oScrollbar.obj.removeClass("scrolling");
             document.ontouchmove = document.ontouchend = null;
+            triggerScrollEvents(iPosition);
+        }
+        
+        function triggerScrollEvents(position) {
+            var pos = $.extend({ axis: options.axis }, position);
+            root.trigger('scroll', $.Event('scroll'), pos);
+
+            if (pos.axis === 'y' && pos.now >= paging.at && paging.at > 0 && paging.num < paging.max) {
+                root.trigger('pagitation', $.Event('scroll'), pos);
+                gotoPage(paging.num++);
+                paging.at = 0;
+            }
+        }
+
+        function gotoPage(pageNumber) {
+            if (!paging.url) return;
+            var query = $.extend({}, paging.data);
+            query[paging.key] = pageNumber;
+
+            $.get(paging.url, query, function (data, status) {
+                if (status !== 'success') return;
+                if (data == '') paging.max = paging.num;
+                
+                if (root.trigger('pagingappend', $.Event('paging', data))) {
+                    $(oContent.obj).append(data);
+                }
+                
+                oSelf.update('relative');
+            });
+            
+        }
+        
+        function getPagePosition() {
+            var re = /^([0-9]+)%$/,
+                bottom = (oContent[options.axis] - oViewport[options.axis]);
+            
+            if (re.test(options.pagingAt)) {
+                return bottom * (parseFloat(re.exec(options.pagingAt)[1]) / 100);
+            }
+
+            return bottom - parseFloat(options.pagingAt);
         }
 
         return initialize();
