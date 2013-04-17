@@ -32,6 +32,7 @@
             , pagingData: {}
             , pagingKey: 'page'
             , pagingMax: 10
+            , pagingAppendTo: null
             , updateWithWindow: true
         }
     };
@@ -48,6 +49,11 @@
 
     $.fn.tinyscrollbar_update = function (sScroll) {
         return $(this).data('tsb').update(sScroll);
+    };
+
+    $.fn.tinyscrollbar_paging = function () {
+        var instance = $(this).data('tsb');
+        return instance.resetPaging.apply(instance, arguments);
     };
 
     function Scrollbar(root, options) {
@@ -97,7 +103,8 @@
                 url: options.pagingUrl,
                 data: options.pagingData,
                 key: options.pagingKey,
-                max: options.pagingMax + 1
+                max: options.pagingMax + 1,
+                appendTo: options.pagingAppendTo
             }
             ;
 
@@ -124,6 +131,19 @@
             iScroll = (sScroll === 'bottom' && oContent.ratio <= 1) ? (oContent[options.axis] - oViewport[options.axis]) : isNaN(parseInt(sScroll, 10)) ? iScroll : parseInt(sScroll, 10);
 
             setSize();
+        };
+
+        this.resetPaging = function (resetScroll, config) {
+            if (typeof resetScroll === 'object') {
+                config = resetScroll;
+                resetScroll = false;
+            }
+
+            paging = $.extend({ }, paging, config);
+
+            if (resetScroll) {
+                this.update(0);
+            }
         };
 
         function setSize() {
@@ -253,6 +273,16 @@
 
         function gotoPage(pageNumber) {
             if (!paging.url) return;
+            if (typeof paging.data === 'string') {
+                paging.data = JSON.parse(
+                    '{"' +
+                        decodeURI(paging.data
+                                        .replace(/&/g, '","')
+                                        .replace(/=/g, '":"'))
+                        + '"}'
+                );
+            }
+
             var query = $.extend({}, paging.data);
             query[paging.key] = pageNumber;
 
@@ -261,7 +291,7 @@
                 if (data == '') paging.max = paging.num;
                 
                 if (root.trigger('pagingappend', $.Event('paging', data))) {
-                    $(oContent.obj).append(data);
+                    $(paging.appendTo || oContent.obj).append(data);
                 }
                 
                 oSelf.update('relative');

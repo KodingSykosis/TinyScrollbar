@@ -16,6 +16,7 @@ Options
 	pagingData         - Additional data copied to the query
 	pagingKey          - Key name to set the page number to (default: 'page')
 	pagingMax          - Max page to request (default: 10)
+	pagingAppendTo     - Element to append next page content to
 	updateWithWindow   - Updates the scroll with window resize (default: true)
 
 Events
